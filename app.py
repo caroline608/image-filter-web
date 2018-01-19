@@ -20,11 +20,10 @@ def open_send(filename):
     jsonStr = json.dumps({"type": "image/"+ file_extension[1:], "data": image_encoded})
     socketio.emit('image', jsonStr)
 
-def opencv_filter(message, filename):
-    h = int(message["h"])
-    s = int(message["s"])
-    v = int(message["v"])
-    img = mpimg.imread(filename, 'rb')
+def hsv_filter(message, img):
+    h = int(message["hsv"]["h"])
+    s = int(message["hsv"]["s"])
+    v = int(message["hsv"]["v"])
     hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
     lower = np.array([h, s, v])
     upper = np.array([255, 255, 255])
@@ -33,7 +32,38 @@ def opencv_filter(message, filename):
     gray = cv2.cvtColor(res, cv2.COLOR_RGB2GRAY)
     color_binary = np.zeros_like(gray)
     color_binary[(gray >= 10) & (gray <= 255)] = 1
-    mpimg.imsave("tmp/" + filename, color_binary, cmap='gray')
+    return color_binary
+
+def hls_filter(message, img):
+    h = int(message["hls"]["h"])
+    l = int(message["hls"]["l"])
+    s = int(message["hls"]["s"])
+    hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+    lower = np.array([h, l, s])
+    upper = np.array([255, 255, 255])
+    mask = cv2.inRange(hls, lower, upper)
+    res = cv2.bitwise_and(img, img, mask=mask)
+    gray = cv2.cvtColor(res, cv2.COLOR_RGB2GRAY)
+    color_binary = np.zeros_like(gray)
+    color_binary[(gray >= 10) & (gray <= 255)] = 1
+    return color_binary
+
+def opencv_filter(message, filename):
+    isHLS = bool(message["isHLS"])
+    isHSV = bool(message["isHSV"])
+    img = mpimg.imread(filename, 'rb')
+
+    combined_binary = np.zeros_like(img[:,:,0])
+    if(isHSV):
+        temp = hsv_filter(message, img)
+        combined_binary[(temp == 1)] = 1
+        print("HSV")
+    if(isHLS):
+        temp = hls_filter(message, img)
+        combined_binary[(temp == 1)] = 1
+        print("HLS")
+
+    mpimg.imsave("tmp/" + filename, combined_binary, cmap='gray')
 
 @socketio.on('setup')
 def setup(message):
