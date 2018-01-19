@@ -36,7 +36,7 @@ def opencv_filter(message, filename):
     mpimg.imsave("tmp/" + filename, color_binary, cmap='gray')
 
 @socketio.on('setup')
-def handle_message(message):
+def setup(message):
     open_send(file_name)
 
 @socketio.on('filter')
