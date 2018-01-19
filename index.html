@@ -3,119 +3,124 @@
 
 <img id="img"></img>
 <script type="text/javascript" charset="utf-8">
+    $( document ).ready(function() {
+        $("#hsvDiv").hide();
+        $("#hlsDiv").hide();
+    });
+
     var socket = io.connect('http://localhost:5000');
     socket.on('connect', function() {
         socket.emit('setup', '');
     });
-	socket.on('image', function(arg) {
-		json = JSON.parse(arg)
-		image = json.data;
-	    image = image.substring(2);
-	    image = image.slice(0, -1);
-		let imgBase64 = 'data:' + json.type + ';base64,' + image;
-    	$("#img1").attr("src", imgBase64)
+    socket.on('image', function(arg) {
+        json = JSON.parse(arg)
+        image = json.data;
+        image = image.substring(2);
+        image = image.slice(0, -1);
+        let imgBase64 = 'data:' + json.type + ';base64,' + image;
+        $("#img1").attr("src", imgBase64)
     });
 
     function filter() {
-    	var isHSV = $("#hsvCheck").is(":checked")
-    	var h = $("#h1").val();
-    	var s = $("#s1").val();
-    	var v = $("#v1").val();
-    	var hsv = {"h": h, "s": s, "v": v}
+        var isHSV = $("#hsvCheck").is(":checked")
+        var h = $("#h1").val();
+        var s = $("#s1").val();
+        var v = $("#v1").val();
+        var hsv = {"h": h, "s": s, "v": v}
 
-    	var isHLS = $("#hlsCheck").is(":checked")
-    	var h = $("#h2").val();
-    	var l = $("#l2").val();
-    	var s = $("#s2").val();
-    	var hls = {"h": h, "l": l, "s": s}
+        var isHLS = $("#hlsCheck").is(":checked")
+        var h = $("#h2").val();
+        var l = $("#l2").val();
+        var s = $("#s2").val();
+        var hls = {"h": h, "l": l, "s": s}
 
-    	var json = {"isHSV": isHSV, "hsv": hsv,
-    				"isHLS": isHLS, "hls": hls }
+        var json = {"isHSV": isHSV, "hsv": hsv,
+                    "isHLS": isHLS, "hls": hls }
 
-    	socket.emit('filter', json);
+        socket.emit('filter', json);
     }
 </script>
 <html>
-	<head></head>
-	<body>
-		<div id="originalImage" style="width:400px; height:400px"><img id="img1" style="width:400px; height:400px"></div><br>
+    <head></head>
+    <body>
+        <div id="originalImage" style="width:400px; height:400px"><img id="img1" style="width:400px; height:400px"></div><br>
 
-		<input type="checkbox" id="hsvCheck"/>HSV &nbsp; <input type="checkbox" id="hlsCheck"/>HLS
-		<div id="hsvDiv">
-			<table>
-				<tr>
-					<td>
-						H
-					</td>
-					<td>
-						<input type="range" id="h1" min="0" max="255" value="0" step="1" style="width:500px" oninput="h1_disp.value=h1.value" onchange="filter();h1_disp.value=h1.value">
-					</td>
-					<td>
-						<input type="number" id="h1_disp" min="0" max="255" value="0" style="width:40px" oninput="h1.value=h1_disp.value" onchange="filter();h1.value=h1_disp.value">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						S
-					</td>
-					<td>
-						<input type="range" id="s1" min="0" max="255" value="0" step="1" style="width:500px" oninput="s1_disp.value=s1.value" onchange="filter();s1_disp.value=s1.value">
-					</td>
-					<td>
-						<input type="number" id="s1_disp" min="0" max="255" value="0" style="width:40px" oninput="s1.value=s1_disp.value" onchange="filter();s1.value=s1_disp.value">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						V
-					</td>
-					<td>
-						<input type="range" id="v1" min="0" max="255" value="0" step="1" style="width:500px" oninput="v1_disp.value=v1.value" onchange="filter();v1_disp.value=v1.value">
-					</td>
-					<td>
-						<input type="number" id="v1_disp" min="0" max="255" value="0" style="width:40px" oninput="v1.value=v1_disp.value" onchange="filter();v1.value=v1_disp.value">
-					</td>
-				</tr>
-			</table>
-		</div>
-		<div id="hlsDiv">
-			<table>
-				<tr>
-					<td>
-						H
-					</td>
-					<td>
-						<input type="range" id="h2" min="0" max="255" value="0" step="1" style="width:500px" oninput="h2_disp.value=h2.value" onchange="filter();h2_disp.value=h2.value">
-					</td>
-					<td>
-						<input type="number" id="h2_disp" min="0" max="255" value="0" style="width:40px" oninput="h2.value=h2_disp.value" onchange="filter();h2.value=h2_disp.value">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						L
-					</td>
-					<td>
-						<input type="range" id="l2" min="0" max="255" value="0" step="1" style="width:500px" oninput="l2_disp.value=l2.value" onchange="filter();l2_disp.value=l2.value">
-					</td>
-					<td>
-						<input type="number" id="l2_disp" min="0" max="255" value="0" style="width:40px" oninput="l2.value=l2_disp.value" onchange="filter();l2.value=l2_disp.value">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						S
-					</td>
-					<td>
-						<input type="range" id="s2" min="0" max="255" value="0" step="1" style="width:500px" oninput="s2_disp.value=s2.value" onchange="filter();s2_disp.value=s2.value">
-					</td>
-					<td>
-						<input type="number" id="s2_disp" min="0" max="255" value="0" style="width:40px" oninput="s2.value=s2_disp.value" onchange="filter();s2.value=s2_disp.value">
-					</td>
-				</tr>
-			</table>
-		</div>
-	</body>
+        <input type="checkbox" id="hsvCheck" onclick="$('#hsvDiv').toggle(); filter();" />HSV &nbsp; <input type="checkbox" id="hlsCheck" onclick="$('#hlsDiv').toggle(); filter();"/>HLS
+        <div id="hsvDiv">
+            <table>
+                <tr>
+                    <td>
+                        H
+                    </td>
+                    <td>
+                        <input type="range" id="h1" min="0" max="255" value="0" step="1" style="width:500px" oninput="h1_disp.value=h1.value" onchange="filter();h1_disp.value=h1.value">
+                    </td>
+                    <td>
+                        <input type="number" id="h1_disp" min="0" max="255" value="0" style="width:40px" oninput="h1.value=h1_disp.value" onchange="filter();h1.value=h1_disp.value">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        S
+                    </td>
+                    <td>
+                        <input type="range" id="s1" min="0" max="255" value="0" step="1" style="width:500px" oninput="s1_disp.value=s1.value" onchange="filter();s1_disp.value=s1.value">
+                    </td>
+                    <td>
+                        <input type="number" id="s1_disp" min="0" max="255" value="0" style="width:40px" oninput="s1.value=s1_disp.value" onchange="filter();s1.value=s1_disp.value">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        V
+                    </td>
+                    <td>
+                        <input type="range" id="v1" min="0" max="255" value="0" step="1" style="width:500px" oninput="v1_disp.value=v1.value" onchange="filter();v1_disp.value=v1.value">
+                    </td>
+                    <td>
+                        <input type="number" id="v1_disp" min="0" max="255" value="0" style="width:40px" oninput="v1.value=v1_disp.value" onchange="filter();v1.value=v1_disp.value">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="hlsDiv">
+            <table>
+                <tr>
+                    <td>
+                        H
+                    </td>
+                    <td>
+                        <input type="range" id="h2" min="0" max="255" value="0" step="1" style="width:500px" oninput="h2_disp.value=h2.value" onchange="filter();h2_disp.value=h2.value">
+                    </td>
+                    <td>
+                        <input type="number" id="h2_disp" min="0" max="255" value="0" style="width:40px" oninput="h2.value=h2_disp.value" onchange="filter();h2.value=h2_disp.value">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        L
+                    </td>
+                    <td>
+                        <input type="range" id="l2" min="0" max="255" value="0" step="1" style="width:500px" oninput="l2_disp.value=l2.value" onchange="filter();l2_disp.value=l2.value">
+                    </td>
+                    <td>
+                        <input type="number" id="l2_disp" min="0" max="255" value="0" style="width:40px" oninput="l2.value=l2_disp.value" onchange="filter();l2.value=l2_disp.value">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        S
+                    </td>
+                    <td>
+                        <input type="range" id="s2" min="0" max="255" value="0" step="1" style="width:500px" oninput="s2_disp.value=s2.value" onchange="filter();s2_disp.value=s2.value">
+                    </td>
+                    <td>
+                        <input type="number" id="s2_disp" min="0" max="255" value="0" style="width:40px" oninput="s2.value=s2_disp.value" onchange="filter();s2.value=s2_disp.value">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
 </html>
 
 
