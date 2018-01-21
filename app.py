@@ -53,17 +53,14 @@ def opencv_filter(message, filename):
     isHSV = bool(message["isHSV"])
     img = mpimg.imread(filename, 'rb')
 
-    if(isHSV and isHLS):
-        color1 = hsv_filter(message, img)
-        color2 = hls_filter(message, img)
-        combined_binary = np.zeros_like(color1)
-        combined_binary[(color1 == 1)|(color2 == 1)] = 1
-        print("both")
-    elif(isHSV):
-        combined_binary = hsv_filter(message, img)
+    combined_binary = np.zeros_like(img[:,:,0])
+    if(isHSV):
+        temp = hsv_filter(message, img)
+        combined_binary[(temp == 1)] = 1
         print("HSV")
-    elif(isHLS):
-        combined_binary = hls_filter(message, img)
+    if(isHLS):
+        temp = hls_filter(message, img)
+        combined_binary[(temp == 1)] = 1
         print("HLS")
 
     mpimg.imsave("tmp/" + filename, combined_binary, cmap='gray')
