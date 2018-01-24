@@ -21,9 +21,9 @@ def open_send(filename):
     socketio.emit('image', jsonStr)
 
 def hsv_filter(message, img):
-    h = int(message["hsv"]["h"])
-    s = int(message["hsv"]["s"])
-    v = int(message["hsv"]["v"])
+    h = int(message["HSV"]["H"])
+    s = int(message["HSV"]["S"])
+    v = int(message["HSV"]["V"])
     hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
     lower = np.array([h, s, v])
     upper = np.array([255, 255, 255])
@@ -35,9 +35,9 @@ def hsv_filter(message, img):
     return color_binary
 
 def hls_filter(message, img):
-    h = int(message["hls"]["h"])
-    l = int(message["hls"]["l"])
-    s = int(message["hls"]["s"])
+    h = int(message["HLS"]["H"])
+    l = int(message["HLS"]["L"])
+    s = int(message["HLS"]["S"])
     hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
     lower = np.array([h, l, s])
     upper = np.array([255, 255, 255])
